@@ -14,8 +14,8 @@ public class Line extends ACurve {
         double bx = this.b.getX();
         double by = this.b.getY();
         return new Point(
-                Algebra.linear(ax, ay, t),
-                Algebra.linear(bx, by, t)
+                Algebra.linear(ax, bx, t),
+                Algebra.linear(ay, by, t)
         );
     }
 }
