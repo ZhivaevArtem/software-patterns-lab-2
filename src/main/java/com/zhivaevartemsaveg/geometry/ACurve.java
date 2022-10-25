@@ -1,7 +1,7 @@
 package com.zhivaevartemsaveg.geometry;
 
 public abstract class ACurve implements ICurve {
-    protected IPoint a, b;
+    protected final IPoint a, b;
 
     public ACurve(IPoint a, IPoint b) {
         this.a = a;

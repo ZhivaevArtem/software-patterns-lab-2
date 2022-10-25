@@ -11,11 +11,11 @@ public class DrawContextSwing extends ADrawContext {
 
     private DrawContextSwing() {}
 
-    public static DrawContextSwing create() {
+    public static DrawContextSwing create(int w, int h) {
         DrawContextSwing ctx = new DrawContextSwing();
         ctx.frame = new JFrame("Java Swing");
         ctx.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        ctx.frame.setSize(800, 600);
+        ctx.frame.setSize(w, h);
         ctx.frame.setResizable(false);
         ctx.canvas = new Canvas();
         ctx.frame.add(ctx.canvas);

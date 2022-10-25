@@ -1,4 +1,4 @@
-package com.zhivaevartemsaveg.userinterface;
+package com.zhivaevartemsaveg;
 
 import com.zhivaevartemsaveg.geometry.IPoint;
 import com.zhivaevartemsaveg.geometry.Point;
@@ -62,7 +62,7 @@ public class Main {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        IDrawContext ctx = DrawContextFactory.createContext();
+        IDrawContext ctx = DrawContextFactory.createContext(800, 600);
 
         Scanner sc = new Scanner(System.in);
         while (sc.hasNext()) {
