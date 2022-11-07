@@ -1,10 +1,18 @@
 package com.zhivaevartemsaveg.geometry;
 
 public abstract class ACurve implements ICurve {
-    protected IPoint a, b;
+    private IPoint a, b;
 
-    public ACurve(IPoint a, IPoint b) {
+    protected ACurve(IPoint a, IPoint b) {
         this.a = a;
         this.b = b;
+    }
+
+    protected IPoint getA() {
+        return a;
+    }
+
+    protected IPoint getB() {
+        return b;
     }
 }

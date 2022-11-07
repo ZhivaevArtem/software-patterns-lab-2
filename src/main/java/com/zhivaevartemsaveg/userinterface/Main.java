@@ -4,8 +4,7 @@ import com.zhivaevartemsaveg.geometry.IPoint;
 import com.zhivaevartemsaveg.geometry.Point;
 import com.zhivaevartemsaveg.visual.VisualBezier;
 import com.zhivaevartemsaveg.visual.VisualLine;
-import com.zhivaevartemsaveg.visual.context.DrawContextFactory;
-import com.zhivaevartemsaveg.visual.context.IDrawContext;
+import com.zhivaevartemsaveg.visual.context.IDrawScheme;
 
 import java.util.Scanner;
 
@@ -62,14 +61,14 @@ public class Main {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        IDrawContext ctx = DrawContextFactory.createContext();
+//        IDrawScheme ctx = DrawContextFactory.createContext();
 
         Scanner sc = new Scanner(System.in);
         while (sc.hasNext()) {
             String[] commands = sc.nextLine().split(" ");
             switch (commands[0]) {
                 case "clear":
-                    ctx.clean();
+//                    ctx.clear();
                     break;
                 case "line":
                     VisualLine line = generateLine(
@@ -78,7 +77,7 @@ public class Main {
                             Integer.parseInt(commands[3]),
                             Integer.parseInt(commands[4])
                     );
-                    line.draw(ctx);
+//                    line.draw(ctx);
                     break;
                 case "bezier":
                     VisualBezier bezier = generateBezier(
@@ -91,7 +90,7 @@ public class Main {
                             Integer.parseInt(commands[7]),
                             Integer.parseInt(commands[8])
                     );
-                    bezier.draw(ctx);
+//                    bezier.draw(ctx);
                     break;
             }
         }

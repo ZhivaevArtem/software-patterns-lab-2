@@ -1,7 +1,7 @@
 package com.zhivaevartemsaveg.visual;
 
-import com.zhivaevartemsaveg.visual.context.IDrawContext;
+import com.zhivaevartemsaveg.visual.context.IDrawScheme;
 
 public interface IDrawable {
-    void draw(IDrawContext context);
+    void draw(IDrawScheme context);
 }

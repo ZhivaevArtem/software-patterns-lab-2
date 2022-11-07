@@ -16,18 +16,8 @@ public class Point implements IPoint {
     }
 
     @Override
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    @Override
     public double getY() {
         return y;
-    }
-
-    @Override
-    public void setY(double y) {
-        this.y = y;
     }
 
     @Override

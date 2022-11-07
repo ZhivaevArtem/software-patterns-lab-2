@@ -13,10 +13,10 @@ public class Bezier extends ACurve {
 
     @Override
     public IPoint getPoint(double t) {
-        double ax = this.a.getX();
-        double ay = this.a.getY();
-        double bx = this.b.getX();
-        double by = this.b.getY();
+        double ax = this.getA().getX();
+        double ay = this.getA().getY();
+        double bx = this.getB().getX();
+        double by = this.getB().getY();
         double cx = this.c.getX();
         double cy = this.c.getY();
         double dx = this.d.getX();

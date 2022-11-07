@@ -1,5 +1,7 @@
 package com.zhivaevartemsaveg.utils;
 
+import com.zhivaevartemsaveg.geometry.IPoint;
+
 public class Algebra {
     public static double linear(double a, double b, double t) {
         return (1 - t) * a + t * b;
@@ -12,5 +14,10 @@ public class Algebra {
     public static double round(double a, int signs) {
         double m = Math.pow(10, signs);
         return Math.round(a * m) / m;
+    }
+
+    public static double angle(IPoint a, IPoint b) {
+        double tan = (b.getY() - a.getY()) / (b.getX() - a.getX());
+        return Math.atan(tan) - Math.PI / 2;
     }
 }

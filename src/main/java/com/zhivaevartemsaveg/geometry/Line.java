@@ -7,12 +7,19 @@ public class Line extends ACurve {
         super(a, b);
     }
 
+    public double length() {
+        return Math.sqrt(
+                Math.pow(getA().getX() - getB().getX(), 2)
+                + Math.pow(getA().getY() - getB().getY(), 2)
+        );
+    }
+
     @Override
     public IPoint getPoint(double t) {
-        double ax = this.a.getX();
-        double ay = this.a.getY();
-        double bx = this.b.getX();
-        double by = this.b.getY();
+        double ax = this.getA().getX();
+        double ay = this.getA().getY();
+        double bx = this.getB().getX();
+        double by = this.getB().getY();
         return new Point(
                 Algebra.linear(ax, bx, t),
                 Algebra.linear(ay, by, t)
