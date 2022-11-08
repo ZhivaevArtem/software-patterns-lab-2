@@ -2,6 +2,7 @@ package com.zhivaevartemsaveg.userinterface.swing;
 
 import com.zhivaevartemsaveg.geometry.Bezier;
 import com.zhivaevartemsaveg.geometry.Point;
+import com.zhivaevartemsaveg.visual.DrawableComposite;
 import com.zhivaevartemsaveg.visual.IDrawable;
 import com.zhivaevartemsaveg.visual.VisualBezier;
 import com.zhivaevartemsaveg.visual.VisualLine;
@@ -10,8 +11,31 @@ import com.zhivaevartemsaveg.visual.context.swing.SwingCanvas;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 public class Main {
+    private static final List<IDrawable> drawables = Arrays.asList(
+            new VisualBezier(new Point(80, 100), new Point(300, 300), new Point(100, 300), new Point(300, 500)),
+            new VisualLine(new Point(100, 100), new Point(250, 350)),
+            new DrawableComposite(
+                    new VisualLine(new Point(60, 70), new Point(150, 300)),
+                    new VisualBezier(new Point(80, 100), new Point(500, 200), new Point(100, 400), new Point(300, 500))
+            )
+    );
+    private static int drawablesTop = 0;
+
+    private static void exportSvg(SvgCanvas svg, String name) {
+        try (FileWriter writer = new FileWriter(name + ".svg")) {
+            writer.write(svg.getSvg());
+            writer.flush();
+        } catch (IOException ex) {
+            System.out.println("ex = " + ex);
+        }
+    }
+
     public static void main(String[] args) {
         SwingCanvas left = new SwingCanvas(),
                 right = new SwingCanvas();
@@ -20,11 +44,9 @@ public class Main {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1280, 720);
 
-        GridLayout layout = new GridLayout(1, 2);
+        LayoutManager layout = new GridBagLayout();
         frame.setLayout(layout);
 
-        frame.add(left);
-        frame.add(right);
         frame.setVisible(true);
 
         SvgCanvas leftSvg = new SvgCanvas(),
@@ -39,17 +61,56 @@ public class Main {
                 rightSvg
         ));
 
-        IDrawable curve = new VisualBezier(new Point(80, 100), new Point(300, 300), new Point(100, 300), new Point(300, 500));
-        IDrawable line = new VisualLine(new Point(100, 100), new Point(250, 350));
-        line.draw(leftScheme);
-        line.draw(rightScheme);
-        curve.draw(leftScheme);
-        curve.draw(rightScheme);
+        IDrawScheme composedScheme = new DrawSchemeComposer(
+                leftScheme,
+                rightScheme
+        );
 
-        String leftSvgCode = leftSvg.getSvg();
-        String rightSvgCode = rightSvg.getSvg();
+        JButton leftExport = new JButton("Export");
+        JButton rightExport = new JButton("Export");
+        JButton generate = new JButton("Generate");
 
-        System.out.println("leftSvgCode = " + leftSvgCode);
-        System.out.println("rightSvgCode = " + rightSvgCode);
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridy = 0;
+        c.gridx = 0;
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = .5;
+        c.weighty = .5;
+        frame.add(left, c);
+        c.gridx = 1;
+        frame.add(right, c);
+
+        c = new GridBagConstraints();
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 1;
+        frame.add(leftExport, c);
+        c.gridx = 1;
+        frame.add(rightExport, c);
+
+        c.gridy = 2;
+        c.gridx = 0;
+        c.gridwidth = 2;
+        frame.add(generate, c);
+
+        generate.addActionListener((e) -> {
+            if (drawablesTop >= drawables.size()) {
+                drawablesTop = 0;
+                composedScheme.clear();
+            } else {
+                drawables.get(drawablesTop++).draw(composedScheme);
+            }
+        });
+
+        leftExport.addActionListener((e) -> {
+            exportSvg(leftSvg, "leftCanvas");
+        });
+
+        rightExport.addActionListener((e) -> {
+            exportSvg(rightSvg, "rightCanvas");
+        });
+
+        Graphics g = frame.getGraphics();
+        frame.paint(g);
     }
 }
