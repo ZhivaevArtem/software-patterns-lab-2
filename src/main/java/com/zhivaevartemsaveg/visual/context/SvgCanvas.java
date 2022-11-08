@@ -20,7 +20,7 @@ public class SvgCanvas implements ICanvas {
     }
 
     public String getSvg() {
-        return String.format("<svg width=\"%d\" height=\"%d\" viewBox=\"0 0 %d %d\">\n",
+        return String.format("<svg width=\"%d\" height=\"%d\" viewBox=\"0 0 %d %d\" xmlns=\"http://www.w3.org/2000/svg\">\n",
                     width, height, width, height)
                 + tags.stream().map(s -> "\t" + s).collect(Collectors.joining("\n"))
                 + "\n</svg>";
