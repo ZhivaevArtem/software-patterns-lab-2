@@ -8,6 +8,8 @@ public interface ICanvas {
     void setColor(Color c);
     void clear();
 
+    void setSize(int w, int h);
+
     void drawLine(IPoint a, IPoint b);
     void drawCircle(IPoint center, double rad);
     void drawSquare(IPoint center, double size);

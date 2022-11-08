@@ -43,4 +43,9 @@ public class CanvasComposer implements ICanvas {
     public void drawArrow(IPoint p, double angle, double length) {
         canvases.forEach(c -> c.drawArrow(p, angle, length));
     }
+
+    @Override
+    public void setSize(int w, int h) {
+        canvases.forEach(c -> c.setSize(w, h));
+    }
 }

@@ -11,11 +11,25 @@ import java.util.stream.Collectors;
 public class SvgCanvas implements ICanvas {
     private Color color;
     private final List<String> tags = new LinkedList<>();
+    private int width = 1280;
+    private int height = 720;
+
+    public SvgCanvas(int w, int h) {
+        width = w;
+        height = h;
+    }
 
     public String getSvg() {
-        return "<svg>\n"
+        return String.format("<svg width=\"%d\" height=\"%d\" viewBox=\"0 0 %d %d\">\n",
+                    width, height, width, height)
                 + tags.stream().map(s -> "\t" + s).collect(Collectors.joining("\n"))
                 + "\n</svg>";
+    }
+
+    @Override
+    public void setSize(int w, int h) {
+        this.width = w;
+        this.height = h;
     }
 
     @Override

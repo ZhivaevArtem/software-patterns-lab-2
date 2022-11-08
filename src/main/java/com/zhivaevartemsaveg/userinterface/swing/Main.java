@@ -11,6 +11,8 @@ import com.zhivaevartemsaveg.visual.context.swing.SwingCanvas;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
@@ -36,21 +38,23 @@ public class Main {
         }
     }
 
+    public static int HEIGHT = 720, WIDTH = 1280;
+
     public static void main(String[] args) {
         SwingCanvas left = new SwingCanvas(),
                 right = new SwingCanvas();
 
         JFrame frame = new JFrame("Swing");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1280, 720);
+        frame.setSize(WIDTH, HEIGHT);
 
         LayoutManager layout = new GridBagLayout();
         frame.setLayout(layout);
 
         frame.setVisible(true);
 
-        SvgCanvas leftSvg = new SvgCanvas(),
-                rightSvg = new SvgCanvas();
+        SvgCanvas leftSvg = new SvgCanvas(WIDTH, HEIGHT),
+                rightSvg = new SvgCanvas(WIDTH, HEIGHT);
 
         IDrawScheme leftScheme = new DrawSchemeGreen(new CanvasComposer(
                 left,
@@ -92,6 +96,14 @@ public class Main {
         c.gridx = 0;
         c.gridwidth = 2;
         frame.add(generate, c);
+
+        frame.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                leftSvg.setSize(left.getWidth(), left.getHeight());
+                rightSvg.setSize(right.getWidth(), right.getHeight());
+            }
+        });
 
         generate.addActionListener((e) -> {
             if (drawablesTop >= drawables.size()) {
