@@ -6,7 +6,11 @@ import com.zhivaevartemsaveg.visual.context.IDrawScheme;
 
 public class VisualLine extends VisualCurve {
     public VisualLine(IPoint a, IPoint b) {
-        super(new Line(a, b));
+        this(new Line(a, b));
+    }
+
+    public VisualLine(Line line) {
+        super(line);
     }
 
     @Override

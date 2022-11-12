@@ -6,7 +6,11 @@ import com.zhivaevartemsaveg.visual.context.IDrawScheme;
 
 public class VisualBezier extends VisualCurve {
     public VisualBezier(IPoint a, IPoint b, IPoint c, IPoint d) {
-        super(new Bezier(a, b, c, d));
+        this(new Bezier(a, b, c, d));
+    }
+
+    public VisualBezier(Bezier bezier) {
+        super(bezier);
     }
 
     @Override
