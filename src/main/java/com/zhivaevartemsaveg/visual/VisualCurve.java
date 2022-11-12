@@ -2,6 +2,7 @@ package com.zhivaevartemsaveg.visual;
 
 import com.zhivaevartemsaveg.geometry.ICurve;
 import com.zhivaevartemsaveg.geometry.IPoint;
+import com.zhivaevartemsaveg.geometry.strategy.IReduceSegmentsStrategy;
 
 public abstract class VisualCurve implements IDrawable, ICurve {
     private ICurve curve;
@@ -13,5 +14,10 @@ public abstract class VisualCurve implements IDrawable, ICurve {
     @Override
     public IPoint getPoint(double t) {
         return this.curve.getPoint(t);
+    }
+
+    @Override
+    public <T> T reduceSegments(IReduceSegmentsStrategy<T> strategy) {
+        return curve.reduceSegments(strategy);
     }
 }

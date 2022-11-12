@@ -1,7 +1,7 @@
 package com.zhivaevartemsaveg.geometry;
 
 import com.zhivaevartemsaveg.Ref;
-
+import com.zhivaevartemsaveg.geometry.strategy.IReduceSegmentsStrategy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,19 +22,21 @@ public abstract class ACurve implements ICurve {
     }
 
     @Override
-    public double iterateOverSegments(IIterateOverSegmentStrategy strategy) {
-        int segmentsCount = strategy.getPrecision();
-        IPoint[] points = new IPoint[segmentsCount + 1];
-        Ref<Double> acc = new Ref<>(0.0);
-        points[0] = getPoint(0);
+    public final <T> T reduceSegments(IReduceSegmentsStrategy<T> strategy) {
+        int segmentsCount = strategy.getSegmentsCount();
+        Ref<T> accRef = new Ref<>(strategy.getInitialAccumulator());
+
         List<Line> segments = new ArrayList<>(segmentsCount);
-        for (int i = 1; i <= segmentsCount; i++) {
-            double t = 1.0 * i / segmentsCount;
-            points[i] = getPoint(t);
-            segments.add(new Line(points[i-1], points[i]));
-            if (!strategy.reduceSegment(acc, segments, t))
-                break;
+        IPoint lastPoint = getPoint(0);
+        for (int i = 0; i < segmentsCount; i++) {
+            double t = 1.0 * (i + 1) / segmentsCount;
+            IPoint point = getPoint(t);
+            Line segment = new Line(lastPoint, point);
+            lastPoint = point;
+            segments.add(segment);
+            if (!strategy.reduce(accRef, t, segments)) break;
         }
-        return acc.value;
+
+        return accRef.value;
     }
 }

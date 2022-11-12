@@ -1,31 +1,37 @@
 package com.zhivaevartemsaveg.userinterface.swing;
 
-import com.zhivaevartemsaveg.geometry.Bezier;
 import com.zhivaevartemsaveg.geometry.Point;
-import com.zhivaevartemsaveg.visual.DrawableComposite;
-import com.zhivaevartemsaveg.visual.IDrawable;
+import com.zhivaevartemsaveg.geometry.strategy.GetLengthStrategy;
+import com.zhivaevartemsaveg.geometry.strategy.GetParameterStrategy;
 import com.zhivaevartemsaveg.visual.VisualBezier;
+import com.zhivaevartemsaveg.visual.VisualCurve;
 import com.zhivaevartemsaveg.visual.VisualLine;
-import com.zhivaevartemsaveg.visual.context.*;
+import com.zhivaevartemsaveg.visual.context.CanvasComposer;
+import com.zhivaevartemsaveg.visual.context.DrawSchemeBlack;
+import com.zhivaevartemsaveg.visual.context.DrawSchemeComposer;
+import com.zhivaevartemsaveg.visual.context.DrawSchemeGreen;
+import com.zhivaevartemsaveg.visual.context.IDrawScheme;
+import com.zhivaevartemsaveg.visual.context.SvgCanvas;
 import com.zhivaevartemsaveg.visual.context.swing.SwingCanvas;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.LayoutManager;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import javax.swing.JButton;
+import javax.swing.JFrame;
 
 public class Main {
-    private static final List<IDrawable> drawables = Arrays.asList(
-            new VisualBezier(new Point(80, 100), new Point(300, 300), new Point(100, 300), new Point(300, 500)),
-            new VisualLine(new Point(100, 100), new Point(250, 350)),
-            new DrawableComposite(
-                    new VisualLine(new Point(60, 70), new Point(150, 300)),
-                    new VisualBezier(new Point(80, 100), new Point(500, 200), new Point(100, 400), new Point(300, 500))
-            )
+    private static final List<VisualCurve> drawables = Arrays.asList(
+            new VisualBezier(new Point(80, 50), new Point(300, 250), new Point(100, 250), new Point(300, 450)),
+            new VisualLine(new Point(100, 100), new Point(450, 250)),
+            new VisualLine(new Point(160, 70), new Point(520, 150)),
+            new VisualBezier(new Point(80, 150), new Point(500, 250), new Point(100, 450), new Point(300, 550))
     );
     private static int drawablesTop = 0;
 
@@ -110,7 +116,12 @@ public class Main {
                 drawablesTop = 0;
                 composedScheme.clear();
             } else {
-                drawables.get(drawablesTop++).draw(composedScheme);
+                VisualCurve visualCurve = drawables.get(drawablesTop++);
+                visualCurve.draw(composedScheme);
+                double length = visualCurve.reduceSegments(new GetLengthStrategy(1));
+                double midT = visualCurve.reduceSegments(new GetParameterStrategy(length / 2));
+                System.out.println("midT = " + midT);
+                composedScheme.drawFirstPoint(visualCurve.getPoint(midT));
             }
         });
 

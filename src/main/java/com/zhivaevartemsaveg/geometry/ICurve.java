@@ -1,7 +1,9 @@
 package com.zhivaevartemsaveg.geometry;
 
+import com.zhivaevartemsaveg.geometry.strategy.IReduceSegmentsStrategy;
+
 public interface ICurve {
     IPoint getPoint(double t);
 
-    double iterateOverSegments(IIterateOverSegmentStrategy strategy);
+    <T> T reduceSegments(IReduceSegmentsStrategy<T> strategy);
 }
