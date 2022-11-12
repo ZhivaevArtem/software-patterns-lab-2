@@ -1,6 +1,7 @@
 package com.zhivaevartemsaveg.visual.context.swing;
 
 import com.zhivaevartemsaveg.geometry.IPoint;
+import com.zhivaevartemsaveg.utils.Algebra;
 import com.zhivaevartemsaveg.visual.context.ICanvas;
 
 import java.awt.*;
@@ -85,7 +86,7 @@ public class SwingCanvas extends Canvas implements ICanvas {
         polygon.addPoint(0, (int) (2 * length / 3));
         polygon.addPoint((int) (- length / 3), (int) (-length / 3));
         polygon.addPoint((int) (length / 3), (int) (-length / 3));
-        rotatePolygon(polygon, angle, new Point(0, 0), null);
+        rotatePolygon(polygon, angle, new Point(0, 0));
 
         for (int i = 0; i < polygon.xpoints.length; i++) {
             polygon.xpoints[i] += p.getX();
@@ -94,18 +95,20 @@ public class SwingCanvas extends Canvas implements ICanvas {
         addShape(polygon);
     }
 
-    public static void rotatePolygon(Polygon pg, double rotAngle, Point centroid, Polygon original) {
-        double x, y;
-        for (int i = 0; i < pg.npoints; i++) {
-            if (original != null) {
-                x = original.xpoints[i] - centroid.x;
-                y = original.ypoints[i] - centroid.y;
-            } else {
-                x = pg.xpoints[i] - centroid.x;
-                y = pg.ypoints[i] - centroid.y;
-            }
-            pg.xpoints[i] = centroid.x + (int) Math.round(((x * Math.cos(rotAngle)) - (y * Math.sin(rotAngle))));
-            pg.ypoints[i] = centroid.y + (int) Math.round(((x * Math.sin(rotAngle)) + (y * Math.cos(rotAngle))));
+    public static void rotatePolygon(Polygon pg, double rotAngle, Point centroid) {
+        List<IPoint> points = new ArrayList<>(pg.xpoints.length);
+        for (int i = 0; i < pg.xpoints.length; i++) {
+            points.add(new com.zhivaevartemsaveg.geometry.Point(
+                    pg.xpoints[i],
+                    pg.ypoints[i]
+            ));
+        }
+        Algebra.rotatePoints(points, new com.zhivaevartemsaveg.geometry.Point(
+                centroid.x, centroid.y
+        ), rotAngle);
+        for (int i = 0; i < points.size(); i++) {
+            pg.xpoints[i] = (int) Math.round(points.get(i).getX());
+            pg.ypoints[i] = (int) Math.round(points.get(i).getY());
         }
     }
 

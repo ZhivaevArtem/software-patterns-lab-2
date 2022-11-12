@@ -3,6 +3,7 @@ package com.zhivaevartemsaveg.visual.context;
 import com.zhivaevartemsaveg.geometry.IPoint;
 import com.zhivaevartemsaveg.geometry.Point;
 
+import com.zhivaevartemsaveg.utils.Algebra;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -68,23 +69,6 @@ public class SvgCanvas implements ICanvas {
                 size, size));
     }
 
-    private void rotatePoints(List<IPoint> points, IPoint centroid, double rotAngle) {
-        List<IPoint> newPoints = new ArrayList<>(points);
-        double x, y;
-        for (int i = 0; i < points.size(); i++) {
-            x = points.get(i).getX() - centroid.getX();
-            y = points.get(i).getY() - centroid.getY();
-            newPoints.set(i, new Point(
-                    centroid.getX() + (int) Math.round(((x * Math.cos(rotAngle)) - (y * Math.sin(rotAngle)))),
-                    centroid.getY() + (int) Math.round(((x * Math.sin(rotAngle)) + (y * Math.cos(rotAngle))))
-            ));
-        }
-
-        for (int i = 0; i < newPoints.size(); i++) {
-            points.set(i, newPoints.get(i));
-        }
-    }
-
     @Override
     public void drawArrow(IPoint p, double angle, double length) {
         IPoint a = new Point(0, 2 * length / 3);
@@ -92,7 +76,7 @@ public class SvgCanvas implements ICanvas {
         IPoint c = new Point(length / 3, -length / 3);
         List<IPoint> points = new ArrayList<>(Arrays.asList(a, b, c));
 
-        rotatePoints(points, new Point(0, 0), angle);
+        Algebra.rotatePoints(points, new Point(0, 0), angle);
         for (int i = 0; i < points.size(); i++) {
             IPoint point = points.get(i);
             IPoint newPoint = new Point(

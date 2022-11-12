@@ -2,7 +2,7 @@ package com.zhivaevartemsaveg.geometry.decorator;
 
 import com.zhivaevartemsaveg.geometry.ICurve;
 import com.zhivaevartemsaveg.geometry.IPoint;
-import com.zhivaevartemsaveg.geometry.strategy.IReduceSegmentsStrategy;
+import com.zhivaevartemsaveg.utils.Algebra;
 
 public class Fragment implements ICurve {
     private final ICurve curve;
@@ -17,11 +17,6 @@ public class Fragment implements ICurve {
 
     @Override
     public IPoint getPoint(double t) {
-        return curve.getPoint(t * (tEnd - tStart) + tStart);
-    }
-
-    @Override
-    public <T> T reduceSegments(IReduceSegmentsStrategy<T> strategy) {
-        return curve.reduceSegments(strategy);
+        return curve.getPoint(Algebra.map(t, 0, 1, tStart, tEnd));
     }
 }

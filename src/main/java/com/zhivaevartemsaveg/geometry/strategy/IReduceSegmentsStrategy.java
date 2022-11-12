@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface IReduceSegmentsStrategy<T> {
     default int getSegmentsCount() {
-        return 100;
+        return 1000;
     }
 
     default T getInitialAccumulator() {

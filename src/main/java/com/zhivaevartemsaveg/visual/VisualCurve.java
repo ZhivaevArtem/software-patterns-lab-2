@@ -2,12 +2,12 @@ package com.zhivaevartemsaveg.visual;
 
 import com.zhivaevartemsaveg.geometry.ICurve;
 import com.zhivaevartemsaveg.geometry.IPoint;
-import com.zhivaevartemsaveg.geometry.strategy.IReduceSegmentsStrategy;
+import com.zhivaevartemsaveg.visual.context.IDrawScheme;
 
-public abstract class VisualCurve implements IDrawable, ICurve {
+public class VisualCurve implements IDrawable, ICurve {
     private ICurve curve;
 
-    protected VisualCurve(ICurve curve) {
+    public VisualCurve(ICurve curve) {
         this.curve = curve;
     }
 
@@ -17,7 +17,19 @@ public abstract class VisualCurve implements IDrawable, ICurve {
     }
 
     @Override
-    public <T> T reduceSegments(IReduceSegmentsStrategy<T> strategy) {
-        return curve.reduceSegments(strategy);
+    public void draw(IDrawScheme context) {
+        int segmentsCount = 20;
+
+        context.drawFirstPoint(getPoint(0));
+
+        IPoint lastPoint = getPoint(0);
+        for (int i = 1; i <= segmentsCount; i++) {
+            double t = (1.0 * i) / segmentsCount;
+            IPoint point = getPoint(t);
+            context.drawSegment(lastPoint, point);
+            lastPoint = point;
+        }
+
+        context.drawLastPoint(getPoint(1));
     }
 }

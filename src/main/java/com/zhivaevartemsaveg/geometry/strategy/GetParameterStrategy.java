@@ -13,7 +13,9 @@ public class GetParameterStrategy implements IReduceSegmentsStrategy<Double> {
 
     @Override
     public boolean reduce(Ref<Double> accRef, double t, List<Line> segments) {
+        double len = segments.stream().map(Line::length).reduce(Double::sum).get();
+        if (len > maxLength) return false;
         accRef.value = t;
-        return segments.stream().map(Line::length).reduce(Double::sum).get() < maxLength;
+        return len < maxLength;
     }
 }
