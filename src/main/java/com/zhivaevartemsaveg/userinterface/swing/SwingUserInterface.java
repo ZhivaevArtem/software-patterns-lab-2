@@ -6,6 +6,7 @@ import com.zhivaevartemsaveg.geometry.decorator.MoveTo;
 import com.zhivaevartemsaveg.geometry.strategy.GetLengthStrategy;
 import com.zhivaevartemsaveg.geometry.strategy.GetParameterStrategy;
 import com.zhivaevartemsaveg.geometry.strategy.SegmentReducer;
+import com.zhivaevartemsaveg.visual.IDrawable;
 import com.zhivaevartemsaveg.visual.VisualCurve;
 import com.zhivaevartemsaveg.visual.context.CanvasComposer;
 import com.zhivaevartemsaveg.visual.context.DrawSchemeBlack;
@@ -72,8 +73,6 @@ public class SwingUserInterface extends JFrame {
         JButton leftExport = new JButton("Export");
         JButton rightExport = new JButton("Export");
         JButton generate = new JButton("Generate");
-        JButton flip = new JButton("Flip");
-        JButton move = new JButton("Move");
 
         GridBagConstraints c = new GridBagConstraints();
         c.gridy = 0;
@@ -98,25 +97,12 @@ public class SwingUserInterface extends JFrame {
         c.gridwidth = 2;
         this.add(generate, c);
 
-        c.gridy = 3;
-        this.add(flip, c);
-
-        c.gridy = 4;
-        this.add(move, c);
-
         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 leftSvg.setSize(left.getWidth(), left.getHeight());
                 rightSvg.setSize(right.getWidth(), right.getHeight());
             }
-        });
-
-        move.addActionListener((e) -> {
-            curves.replaceAll((curve) -> {
-                return new VisualCurve(new MoveTo(curve, new Point(300, 300)));
-            });
-            redraw();
         });
 
         generate.addActionListener(generateListener);
@@ -127,15 +113,6 @@ public class SwingUserInterface extends JFrame {
 
         rightExport.addActionListener((e) -> {
             exportSvg(rightSvg, "rightCanvas");
-        });
-
-        flip.addActionListener((e) -> {
-            curves.replaceAll(curve -> new VisualCurve(
-                    new Fragment(
-                            curve, 1, 0
-                    )
-            ));
-            redraw();
         });
 
         Graphics g = this.getGraphics();
@@ -153,25 +130,25 @@ public class SwingUserInterface extends JFrame {
 
     private IDrawScheme drawScheme;
 
-    private List<VisualCurve> curves = new ArrayList<>();
+    private final List<IDrawable> drawables = new ArrayList<>();
 
-    public void draw(VisualCurve curve) {
-        curves.add(curve);
+    public void draw(IDrawable drawable) {
+        drawables.add(drawable);
         redraw();
     }
 
     public void clear() {
-        curves.clear();
+        drawables.clear();
         redraw();
     }
 
     public void redraw() {
         drawScheme.clear();
-        curves.forEach((c) -> {
+        drawables.forEach((c) -> {
             c.draw(drawScheme);
-            double len = new SegmentReducer().reduceSegments(c, new GetLengthStrategy(1));
-            double midT = new SegmentReducer().reduceSegments(c, new GetParameterStrategy(len / 2));
-            drawScheme.drawFirstPoint(c.getPoint(midT));
+//            double len = new SegmentReducer().reduceSegments(c, new GetLengthStrategy(1));
+//            double midT = new SegmentReducer().reduceSegments(c, new GetParameterStrategy(len / 2));
+//            drawScheme.drawFirstPoint(c.getPoint(midT));
         });
     }
 }
