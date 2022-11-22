@@ -9,6 +9,7 @@ import com.zhivaevartemsaveg.visual.VisualLine;
 import javax.swing.*;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main extends JFrame {
     private static final IDrawable composite =
@@ -45,10 +46,10 @@ public class Main extends JFrame {
     private static int drawablesTop = 0;
 
     public static void main(String[] args) {
-        int drawablesCount = 0;
-        for (IDrawable drawable : composite) {
-            drawablesCount++;
-        }
+        AtomicInteger drawablesCount = new AtomicInteger();
+        composite.iterate((drawable) -> {
+            drawablesCount.getAndIncrement();
+        });
         System.out.println("drawablesCount = " + drawablesCount);
         SwingUserInterface swing = new SwingUserInterface("Swing");
         swing.onGenerate((e) -> {
