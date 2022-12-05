@@ -151,8 +151,4 @@ public class SwingUserInterface extends JFrame {
 //            drawScheme.drawFirstPoint(c.getPoint(midT));
         });
     }
-
-    public void fillCircle(IPoint iPoint, int rad) {
-        drawScheme.fillCircle(iPoint, rad);
-    }
 }
