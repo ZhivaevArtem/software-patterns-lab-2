@@ -7,7 +7,7 @@ import com.zhivaevartemsaveg.visual.observer.MouseHoverEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MutableVector implements IPoint, ISubject<MouseHoverEvent> {
+public class MutableVector implements IPoint {
     private double x = 0, y = 0;
 
     public IPoint fromPoint(IPoint p) {
@@ -41,21 +41,4 @@ public class MutableVector implements IPoint, ISubject<MouseHoverEvent> {
     }
 
     private final List<IObserver<MouseHoverEvent>> observers = new ArrayList<>();
-
-    @Override
-    public void attach(IObserver<MouseHoverEvent> observer) {
-        observers.add(observer);
-    }
-
-    @Override
-    public void dettach(IObserver<MouseHoverEvent> observer) {
-        observers.remove(observer);
-    }
-
-    @Override
-    public void notifyObservers(MouseHoverEvent event) {
-        for (IObserver<MouseHoverEvent> observer : observers) {
-            observer.update(event);
-        }
-    }
 }
