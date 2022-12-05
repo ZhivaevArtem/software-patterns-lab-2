@@ -29,17 +29,16 @@ public class DrawSchemeBackground implements IDrawScheme {
 
     @Override
     public void fillCircle(IPoint p, double rad) {
-        canvas.setColor(color);
         canvas.fillCircle(p, rad);
     }
 
     @Override
     public void setColor(Color c) {
-
+        canvas.setColor(c);
     }
 
     @Override
     public void clear() {
-
+        canvas.clear();
     }
 }

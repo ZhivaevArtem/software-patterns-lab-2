@@ -40,7 +40,7 @@ public class Main extends JFrame {
                     )
             );
 
-    private static final List<IDrawable> drawables = Arrays.asList(
+    private static final List<IDrawableArea> drawables = Arrays.asList(
             new VisualDisk(new Point(300, 300), 80),
             new VisualDisk(new Point(300, 500), 80),
             new VisualDisk(new Point(500, 300), 80),

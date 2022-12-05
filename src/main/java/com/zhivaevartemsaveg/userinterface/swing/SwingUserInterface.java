@@ -1,11 +1,13 @@
 package com.zhivaevartemsaveg.userinterface.swing;
 
+import com.zhivaevartemsaveg.Ref;
 import com.zhivaevartemsaveg.geometry.IPoint;
 import com.zhivaevartemsaveg.geometry.Point;
 import com.zhivaevartemsaveg.visual.IDrawable;
+import com.zhivaevartemsaveg.visual.IDrawableArea;
 import com.zhivaevartemsaveg.visual.context.*;
 import com.zhivaevartemsaveg.visual.context.swing.SwingCanvas;
-import com.zhivaevartemsaveg.visual.decorator.VisualMoveDecorator;
+import com.zhivaevartemsaveg.visual.decorator.VisualMoveAreaDecorator;
 import com.zhivaevartemsaveg.visual.observer.IObserver;
 import com.zhivaevartemsaveg.visual.observer.ISubject;
 import com.zhivaevartemsaveg.visual.observer.MouseEvent;
@@ -159,8 +161,18 @@ public class SwingUserInterface extends JFrame implements ISubject<MouseEvent> {
             // TODO: undo
         });
 
-        Graphics g = this.getGraphics();
-        this.paint(g);
+//        new Thread(() -> {
+//            try {
+//                Thread.sleep(2000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            Graphics g = getGraphics();
+//            paint(g);
+//            repaint();
+//            update(g);
+//            System.out.println("g = " + g);
+//        }).start();
     }
 
     private void exportSvg(SvgCanvas svg, String name) {
@@ -174,12 +186,29 @@ public class SwingUserInterface extends JFrame implements ISubject<MouseEvent> {
 
     private IDrawScheme drawScheme;
 
-    private final List<VisualMoveDecorator> drawables = new ArrayList<>();
+    private final List<IDrawableArea> drawables = new ArrayList<>();
 
-    public void draw(IDrawable drawable) {
-        VisualMoveDecorator v = new VisualMoveDecorator(drawable);
-        v.setColor(Color.WHITE);
+    public void draw(IDrawableArea drawable) {
+        VisualMoveAreaDecorator v = new VisualMoveAreaDecorator(drawable);
+        Ref<Color> colorRef = new Ref<>(Color.WHITE);
+        v.setColor(colorRef.value);
         drawables.add(v);
+
+        attach(event -> {
+            if (v.contains(event.getPoint())) {
+                if (colorRef.value != Color.GREEN) {
+                    colorRef.value = Color.GREEN;
+                    v.setColor(colorRef.value);
+                    redraw();
+                }
+            } else {
+                if (colorRef.value != Color.WHITE) {
+                    colorRef.value = Color.WHITE;
+                    v.setColor(colorRef.value);
+                    redraw();
+                }
+            }
+        });
         redraw();
     }
 

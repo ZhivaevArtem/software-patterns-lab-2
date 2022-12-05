@@ -1,18 +1,20 @@
 package com.zhivaevartemsaveg.visual.decorator;
 
+import com.zhivaevartemsaveg.geometry.IArea;
 import com.zhivaevartemsaveg.geometry.IPoint;
 import com.zhivaevartemsaveg.geometry.MutableVector;
 import com.zhivaevartemsaveg.visual.IDrawable;
+import com.zhivaevartemsaveg.visual.IDrawableArea;
 import com.zhivaevartemsaveg.visual.context.IDrawScheme;
 
 import java.awt.*;
 
-public class VisualMoveDecorator implements IDrawable {
-    private final IDrawable drawable;
+public class VisualMoveAreaDecorator implements IDrawableArea {
+    private final IDrawableArea drawable;
     private final MutableVector moveBy;
     private Color color = Color.WHITE;
 
-    public VisualMoveDecorator(IDrawable drawable) {
+    public VisualMoveAreaDecorator(IDrawableArea drawable) {
         this.drawable = drawable;
         moveBy = new MutableVector();
     }
@@ -65,5 +67,10 @@ public class VisualMoveDecorator implements IDrawable {
                 context.clear();
             }
         });
+    }
+
+    @Override
+    public boolean contains(IPoint p) {
+        return drawable.contains(moveBy.fromPoint(p));
     }
 }
