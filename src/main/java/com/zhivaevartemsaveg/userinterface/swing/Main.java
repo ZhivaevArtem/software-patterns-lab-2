@@ -20,14 +20,23 @@ public class Main extends JFrame {
                     new VisualBezier(new Point(80, 150), new Point(500, 250), new Point(100, 450), new Point(300, 550)),
                     new DrawableComposite(
                             new VisualLine(new Point(100, 100), new Point(450, 250)),
+                            new DrawableComposite(),
                             new VisualLine(new Point(160, 70), new Point(520, 150)),
                             new VisualBezier(new Point(80, 150), new Point(500, 250), new Point(100, 450), new Point(300, 550)),
                             new DrawableComposite(
                                     new VisualLine(new Point(160, 70), new Point(520, 150)),
                                     new VisualBezier(new Point(80, 150), new Point(500, 250), new Point(100, 450), new Point(300, 550)),
                                     new DrawableComposite(
-                                            new VisualBezier(new Point(80, 150), new Point(500, 250), new Point(100, 450), new Point(300, 550))
-//                                            new DrawableComposite()
+                                            new VisualBezier(new Point(80, 150), new Point(500, 250), new Point(100, 450), new Point(300, 550)),
+                                            new DrawableComposite(
+                                                    new DrawableComposite(
+                                                            new DrawableComposite(
+                                                                    new DrawableComposite(
+                                                                        new VisualBezier(new Point(80, 150), new Point(500, 250), new Point(100, 450), new Point(300, 550))
+                                                                    )
+                                                            )
+                                                    )
+                                            )
                                     )
                             )
                     )
@@ -51,6 +60,11 @@ public class Main extends JFrame {
             drawablesCount.getAndIncrement();
         });
         System.out.println("drawablesCount = " + drawablesCount);
+        AtomicInteger drawablesCount1 = new AtomicInteger();
+        composite.forEach((drawable) -> {
+            drawablesCount1.getAndIncrement();
+        });
+        System.out.println("drawablesCount1 = " + drawablesCount1);
         SwingUserInterface swing = new SwingUserInterface("Swing");
         swing.onGenerate((e) -> {
             if (drawablesTop >= drawables.size()) {
