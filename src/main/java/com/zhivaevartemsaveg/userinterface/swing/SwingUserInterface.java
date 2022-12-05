@@ -4,12 +4,11 @@ import com.zhivaevartemsaveg.geometry.IPoint;
 import com.zhivaevartemsaveg.visual.IDrawable;
 import com.zhivaevartemsaveg.visual.context.*;
 import com.zhivaevartemsaveg.visual.context.swing.SwingCanvas;
+import com.zhivaevartemsaveg.visual.decorator.VisualMoveDecorator;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.event.*;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -130,10 +129,12 @@ public class SwingUserInterface extends JFrame {
 
     private IDrawScheme drawScheme;
 
-    private final List<IDrawable> drawables = new ArrayList<>();
+    private final List<VisualMoveDecorator> drawables = new ArrayList<>();
 
     public void draw(IDrawable drawable) {
-        drawables.add(drawable);
+        VisualMoveDecorator v = new VisualMoveDecorator(drawable);
+        v.setColor(Color.WHITE);
+        drawables.add(v);
         redraw();
     }
 
