@@ -14,6 +14,10 @@ public class MutableVector implements IPoint {
         return new Point(p.getX() + x, p.getY() + y);
     }
 
+    public IPoint toPoint(IPoint p) {
+        return new Point(p.getX() - x, p.getY() - y);
+    }
+
     public void setX(double x) {
         this.x = x;
     }
@@ -32,13 +36,16 @@ public class MutableVector implements IPoint {
 
     @Override
     public double getX() {
-        return 0;
+        return x;
     }
 
     @Override
     public double getY() {
-        return 0;
+        return y;
     }
 
-    private final List<IObserver<MouseHoverEvent>> observers = new ArrayList<>();
+    public void add(IPoint movement) {
+        x += movement.getX();
+        y += movement.getY();
+    }
 }

@@ -1,5 +1,6 @@
 package com.zhivaevartemsaveg.userinterface.swing;
 
+import com.sun.org.apache.regexp.internal.RE;
 import com.zhivaevartemsaveg.Ref;
 import com.zhivaevartemsaveg.geometry.IPoint;
 import com.zhivaevartemsaveg.geometry.Point;
@@ -44,6 +45,7 @@ public class SwingUserInterface extends JFrame implements ISubject<MouseEvent> {
             @Override
             public void mouseDragged(java.awt.event.MouseEvent e) {
                 mouseButtonPressed = true;
+                lastMousePosition = mousePosition;
                 mousePosition = new Point(e.getX(), e.getY());
                 notifyObservers();
             }
@@ -51,6 +53,7 @@ public class SwingUserInterface extends JFrame implements ISubject<MouseEvent> {
             @Override
             public void mouseMoved(java.awt.event.MouseEvent e) {
                 mouseButtonPressed = false;
+                lastMousePosition = mousePosition;
                 mousePosition = new Point(e.getX(), e.getY());
                 notifyObservers();
             }
@@ -188,25 +191,44 @@ public class SwingUserInterface extends JFrame implements ISubject<MouseEvent> {
 
     private final List<IDrawableArea> drawables = new ArrayList<>();
 
+    private Ref<Boolean> isAnyDragging = new Ref<>(false);
     public void draw(IDrawableArea drawable) {
         VisualMoveAreaDecorator v = new VisualMoveAreaDecorator(drawable);
         Ref<Color> colorRef = new Ref<>(Color.WHITE);
+        Ref<Boolean> isDraggingRef = new Ref<>(false);
         v.setColor(colorRef.value);
         drawables.add(v);
 
         attach(event -> {
+            boolean changed = false;
             if (v.contains(event.getPoint())) {
                 if (colorRef.value != Color.GREEN) {
                     colorRef.value = Color.GREEN;
                     v.setColor(colorRef.value);
-                    redraw();
+                    changed = true;
+                }
+                if (event.isPressed() && !isDraggingRef.value && !isAnyDragging.value) {
+                    isDraggingRef.value = true;
+                    isAnyDragging.value = true;
                 }
             } else {
                 if (colorRef.value != Color.WHITE) {
                     colorRef.value = Color.WHITE;
                     v.setColor(colorRef.value);
-                    redraw();
+                    changed = true;
                 }
+            }
+            if (isDraggingRef.value && event.isPressed()) {
+                IPoint movement = event.getMovement();
+                v.move(movement);
+                changed = true;
+            }
+            if (!event.isPressed()) {
+                isDraggingRef.value = false;
+                isAnyDragging.value = false;
+            }
+            if (changed) {
+                redraw();
             }
         });
         redraw();
@@ -227,6 +249,7 @@ public class SwingUserInterface extends JFrame implements ISubject<MouseEvent> {
         });
     }
 
+    private IPoint lastMousePosition;
     private IPoint mousePosition;
     private boolean mouseButtonPressed;
     private final List<IObserver<MouseEvent>> observers = new ArrayList<>();
@@ -243,6 +266,6 @@ public class SwingUserInterface extends JFrame implements ISubject<MouseEvent> {
 
     @Override
     public void notifyObservers() {
-        observers.forEach(observer -> observer.update(new MouseEvent(mousePosition, mouseButtonPressed)));
+        observers.forEach(observer -> observer.update(new MouseEvent(mousePosition, lastMousePosition, mouseButtonPressed)));
     }
 }

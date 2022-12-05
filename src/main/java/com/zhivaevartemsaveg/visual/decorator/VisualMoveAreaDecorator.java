@@ -23,9 +23,8 @@ public class VisualMoveAreaDecorator implements IDrawableArea {
         this.color = color;
     }
 
-    public void move(double x, double y) {
-        moveBy.setX(moveBy.getX() + x);
-        moveBy.setY(moveBy.getY() + y);
+    public void move(IPoint movement) {
+        moveBy.add(movement);
     }
 
     @Override
@@ -71,6 +70,6 @@ public class VisualMoveAreaDecorator implements IDrawableArea {
 
     @Override
     public boolean contains(IPoint p) {
-        return drawable.contains(moveBy.fromPoint(p));
+        return drawable.contains(moveBy.toPoint(p));
     }
 }
