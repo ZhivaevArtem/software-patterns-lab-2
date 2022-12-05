@@ -10,6 +10,8 @@ public interface IDrawScheme {
     void drawSegment(IPoint a, IPoint b);
     void drawLastPoint(IPoint p);
 
+    void fillCircle(IPoint p, double rad);
+
     void setColor(Color c);
     void clear();
 }

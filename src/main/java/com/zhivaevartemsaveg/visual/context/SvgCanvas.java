@@ -97,4 +97,9 @@ public class SvgCanvas implements ICanvas {
                 hashColor(color)
         ));
     }
+
+    @Override
+    public void fillCircle(IPoint p, double rad) {
+
+    }
 }

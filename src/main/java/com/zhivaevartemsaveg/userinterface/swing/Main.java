@@ -1,5 +1,6 @@
 package com.zhivaevartemsaveg.userinterface.swing;
 
+import com.zhivaevartemsaveg.geometry.IPoint;
 import com.zhivaevartemsaveg.geometry.Point;
 import com.zhivaevartemsaveg.visual.DrawableComposite;
 import com.zhivaevartemsaveg.visual.IDrawable;
@@ -54,6 +55,14 @@ public class Main extends JFrame {
     );
     private static int drawablesTop = 0;
 
+    private static final List<IPoint> circleCenters = Arrays.asList(
+            new Point(300, 300),
+            new Point(300, 500),
+            new Point(500, 300),
+            new Point(500, 500)
+    );
+    private static int circleTop = 0;
+
     public static void main(String[] args) {
         AtomicInteger drawablesCount = new AtomicInteger();
         composite.iterate((drawable) -> {
@@ -67,12 +76,18 @@ public class Main extends JFrame {
         System.out.println("drawablesCount1 = " + drawablesCount1);
         SwingUserInterface swing = new SwingUserInterface("Swing");
         swing.onGenerate((e) -> {
-            if (drawablesTop >= drawables.size()) {
-                drawablesTop = 0;
+            if (circleTop >= circleCenters.size()) {
+                circleTop = 0;
                 swing.clear();
                 return;
             }
-            swing.draw(drawables.get(drawablesTop++));
+            swing.fillCircle(circleCenters.get(circleTop++), 80);
+//            if (drawablesTop >= drawables.size()) {
+//                drawablesTop = 0;
+//                swing.clear();
+//                return;
+//            }
+//            swing.draw(drawables.get(drawablesTop++));
         });
         swing.start(1280, 720);
     }

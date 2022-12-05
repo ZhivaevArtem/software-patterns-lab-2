@@ -45,6 +45,11 @@ public class CanvasComposer implements ICanvas {
     }
 
     @Override
+    public void fillCircle(IPoint p, double rad) {
+        canvases.forEach(c -> c.fillCircle(p, rad));
+    }
+
+    @Override
     public void setSize(int w, int h) {
         canvases.forEach(c -> c.setSize(w, h));
     }

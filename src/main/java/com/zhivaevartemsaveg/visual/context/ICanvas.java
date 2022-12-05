@@ -14,4 +14,6 @@ public interface ICanvas {
     void drawCircle(IPoint center, double rad);
     void drawSquare(IPoint center, double size);
     void drawArrow(IPoint p, double angle, double length);
+
+    void fillCircle(IPoint p, double rad);
 }

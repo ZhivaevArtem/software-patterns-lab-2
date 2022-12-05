@@ -1,24 +1,12 @@
 package com.zhivaevartemsaveg.userinterface.swing;
 
-import com.zhivaevartemsaveg.geometry.Point;
-import com.zhivaevartemsaveg.geometry.decorator.Fragment;
-import com.zhivaevartemsaveg.geometry.decorator.MoveTo;
-import com.zhivaevartemsaveg.geometry.strategy.GetLengthStrategy;
-import com.zhivaevartemsaveg.geometry.strategy.GetParameterStrategy;
-import com.zhivaevartemsaveg.geometry.strategy.SegmentReducer;
+import com.zhivaevartemsaveg.geometry.IPoint;
 import com.zhivaevartemsaveg.visual.IDrawable;
-import com.zhivaevartemsaveg.visual.VisualCurve;
-import com.zhivaevartemsaveg.visual.context.CanvasComposer;
-import com.zhivaevartemsaveg.visual.context.DrawSchemeBlack;
-import com.zhivaevartemsaveg.visual.context.DrawSchemeComposer;
-import com.zhivaevartemsaveg.visual.context.DrawSchemeGreen;
-import com.zhivaevartemsaveg.visual.context.IDrawScheme;
-import com.zhivaevartemsaveg.visual.context.SvgCanvas;
+import com.zhivaevartemsaveg.visual.context.*;
 import com.zhivaevartemsaveg.visual.context.swing.SwingCanvas;
-import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.LayoutManager;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -26,8 +14,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JButton;
-import javax.swing.JFrame;
 
 public class SwingUserInterface extends JFrame {
     private ActionListener generateListener;
@@ -41,8 +27,10 @@ public class SwingUserInterface extends JFrame {
     }
 
     public void start(int w, int h) {
-        SwingCanvas left = new SwingCanvas(),
-                right = new SwingCanvas();
+//        SwingCanvas left = new SwingCanvas(),
+//                right = new SwingCanvas();
+        SwingCanvas canvas = new SwingCanvas();
+        canvas.setBackground(Color.BLACK);
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(w, h);
@@ -55,64 +43,76 @@ public class SwingUserInterface extends JFrame {
         SvgCanvas leftSvg = new SvgCanvas(w, h),
                 rightSvg = new SvgCanvas(w, h);
 
-        IDrawScheme leftScheme = new DrawSchemeGreen(new CanvasComposer(
-                left,
-                leftSvg
-        ));
-        IDrawScheme rightScheme = new DrawSchemeBlack(new CanvasComposer(
-                right,
-                rightSvg
-        ));
+//        IDrawScheme leftScheme = new DrawSchemeGreen(new CanvasComposer(
+//                left,
+//                leftSvg
+//        ));
+//        IDrawScheme rightScheme = new DrawSchemeBlack(new CanvasComposer(
+//                right,
+//                rightSvg
+//        ));
+        IDrawScheme scheme = new DrawSchemeBackground(canvas);
 
         IDrawScheme composedScheme = new DrawSchemeComposer(
-                leftScheme,
-                rightScheme
+//                leftScheme,
+//                rightScheme
+                scheme
         );
         drawScheme = composedScheme;
 
-        JButton leftExport = new JButton("Export");
-        JButton rightExport = new JButton("Export");
+//        JButton leftExport = new JButton("Export");
+//        JButton rightExport = new JButton("Export");
         JButton generate = new JButton("Generate");
+        JButton undoButton = new JButton("Undo");
 
         GridBagConstraints c = new GridBagConstraints();
         c.gridy = 0;
         c.gridx = 0;
         c.fill = GridBagConstraints.BOTH;
-        c.weightx = .5;
+        c.weightx = 1;
         c.weighty = .5;
-        this.add(left, c);
-        c.gridx = 1;
-        this.add(right, c);
+//        this.add(left, c);
+//        c.gridx = 1;
+//        this.add(right, c);
+        this.add(canvas, c);
 
         c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 1;
-        this.add(leftExport, c);
-        c.gridx = 1;
-        this.add(rightExport, c);
+        this.add(undoButton, c);
+//        this.add(leftExport, c);
+//        c.gridx = 1;
+//        this.add(rightExport, c);
 
         c.gridy = 2;
         c.gridx = 0;
         c.gridwidth = 2;
         this.add(generate, c);
 
-        this.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                leftSvg.setSize(left.getWidth(), left.getHeight());
-                rightSvg.setSize(right.getWidth(), right.getHeight());
-            }
-        });
+//        this.addComponentListener(new ComponentAdapter() {
+//            @Override
+//            public void componentResized(ComponentEvent e) {
+//                leftSvg.setSize(left.getWidth(), left.getHeight());
+//                rightSvg.setSize(right.getWidth(), right.getHeight());
+//            }
+//        });
 
         generate.addActionListener(generateListener);
+        undoButton.addActionListener((event) -> {
 
-        leftExport.addActionListener((e) -> {
-            exportSvg(leftSvg, "leftCanvas");
         });
 
-        rightExport.addActionListener((e) -> {
-            exportSvg(rightSvg, "rightCanvas");
+//        leftExport.addActionListener((e) -> {
+//            exportSvg(leftSvg, "leftCanvas");
+//        });
+//
+//        rightExport.addActionListener((e) -> {
+//            exportSvg(rightSvg, "rightCanvas");
+//        });
+
+        undoButton.addActionListener((e) -> {
+            // TODO: undo
         });
 
         Graphics g = this.getGraphics();
@@ -150,5 +150,9 @@ public class SwingUserInterface extends JFrame {
 //            double midT = new SegmentReducer().reduceSegments(c, new GetParameterStrategy(len / 2));
 //            drawScheme.drawFirstPoint(c.getPoint(midT));
         });
+    }
+
+    public void fillCircle(IPoint iPoint, int rad) {
+        drawScheme.fillCircle(iPoint, rad);
     }
 }

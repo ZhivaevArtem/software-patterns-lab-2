@@ -6,6 +6,7 @@ import com.zhivaevartemsaveg.visual.context.ICanvas;
 
 import java.awt.*;
 import java.awt.geom.Arc2D;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -34,7 +35,10 @@ public class SwingCanvas extends Canvas implements ICanvas {
         List<ColoredShape> shapes = new ArrayList<>(this.shapes);
         for (ColoredShape shape : shapes) {
             g2d.setColor(shape.getColor());
-            g2d.draw(shape);
+            if (shape.isFilled())
+                g2d.fill(shape);
+            else
+                g2d.draw(shape);
         }
     }
 
@@ -50,9 +54,13 @@ public class SwingCanvas extends Canvas implements ICanvas {
         getGraphicsInstance().clearRect(0, 0, 99999, 99999);
     }
 
-    private void addShape(Shape shape) {
-        shapes.add(new ColoredShape(shape, color));
+    private void addShape(Shape shape, boolean filled) {
+        shapes.add(new ColoredShape(shape, color, filled));
         repaint();
+    }
+
+    private void addShape(Shape shape) {
+        addShape(shape, false);
     }
 
     @Override
@@ -93,6 +101,12 @@ public class SwingCanvas extends Canvas implements ICanvas {
             polygon.ypoints[i] += p.getY();
         }
         addShape(polygon);
+    }
+
+    @Override
+    public void fillCircle(IPoint p, double rad) {
+        Shape shape = new Ellipse2D.Double(p.getX() - rad, p.getY() - rad, rad * 2, rad * 2);
+        addShape(shape, true);
     }
 
     public static void rotatePolygon(Polygon pg, double rotAngle, Point centroid) {

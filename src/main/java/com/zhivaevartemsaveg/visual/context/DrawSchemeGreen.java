@@ -37,6 +37,11 @@ public class DrawSchemeGreen implements IDrawScheme {
     }
 
     @Override
+    public void fillCircle(IPoint p, double rad) {
+
+    }
+
+    @Override
     public void setColor(Color c) {}
 
     @Override

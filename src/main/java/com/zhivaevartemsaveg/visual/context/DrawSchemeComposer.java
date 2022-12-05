@@ -48,6 +48,11 @@ public class DrawSchemeComposer implements IDrawScheme {
     }
 
     @Override
+    public void fillCircle(IPoint p, double rad) {
+        canvases.forEach((c) -> c.fillCircle(p, rad));
+    }
+
+    @Override
     public void setColor(Color c) {
         canvases.forEach((canvas) -> {
             canvas.setColor(c);

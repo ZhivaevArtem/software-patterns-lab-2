@@ -9,10 +9,20 @@ import java.awt.geom.Rectangle2D;
 public class ColoredShape implements Shape {
     private final Shape shape;
     private final Color color;
+    private boolean filled = false;
 
     public ColoredShape(Shape shape, Color color) {
         this.shape = shape;
         this.color = color;
+    }
+
+    public ColoredShape(Shape shape, Color color, boolean filled) {
+        this(shape, color);
+        this.filled = filled;
+    }
+
+    public boolean isFilled() {
+        return filled;
     }
 
     public Color getColor() {
