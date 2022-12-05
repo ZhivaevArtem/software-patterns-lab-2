@@ -1,10 +1,14 @@
 package com.zhivaevartemsaveg.userinterface.swing;
 
 import com.zhivaevartemsaveg.geometry.IPoint;
+import com.zhivaevartemsaveg.geometry.Point;
 import com.zhivaevartemsaveg.visual.IDrawable;
 import com.zhivaevartemsaveg.visual.context.*;
 import com.zhivaevartemsaveg.visual.context.swing.SwingCanvas;
 import com.zhivaevartemsaveg.visual.decorator.VisualMoveDecorator;
+import com.zhivaevartemsaveg.visual.observer.IObserver;
+import com.zhivaevartemsaveg.visual.observer.ISubject;
+import com.zhivaevartemsaveg.visual.observer.MouseEvent;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SwingUserInterface extends JFrame {
+public class SwingUserInterface extends JFrame implements ISubject<MouseEvent> {
     private ActionListener generateListener;
 
     public void onGenerate(ActionListener generateListener) {
@@ -28,8 +32,49 @@ public class SwingUserInterface extends JFrame {
     public void start(int w, int h) {
 //        SwingCanvas left = new SwingCanvas(),
 //                right = new SwingCanvas();
+        attach(event -> {
+            System.out.println("event = " + event);
+        });
         SwingCanvas canvas = new SwingCanvas();
         canvas.setBackground(Color.BLACK);
+
+        canvas.addMouseMotionListener(new MouseMotionListener() {
+            @Override
+            public void mouseDragged(java.awt.event.MouseEvent e) {
+                mouseButtonPressed = true;
+                mousePosition = new Point(e.getX(), e.getY());
+                notifyObservers();
+            }
+
+            @Override
+            public void mouseMoved(java.awt.event.MouseEvent e) {
+                mouseButtonPressed = false;
+                mousePosition = new Point(e.getX(), e.getY());
+                notifyObservers();
+            }
+        });
+        canvas.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) { }
+
+            @Override
+            public void mousePressed(java.awt.event.MouseEvent e) {
+                mouseButtonPressed = true;
+                notifyObservers();
+            }
+
+            @Override
+            public void mouseReleased(java.awt.event.MouseEvent e) {
+                mouseButtonPressed = false;
+                notifyObservers();
+            }
+
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) { }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) { }
+        });
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(w, h);
@@ -151,5 +196,24 @@ public class SwingUserInterface extends JFrame {
 //            double midT = new SegmentReducer().reduceSegments(c, new GetParameterStrategy(len / 2));
 //            drawScheme.drawFirstPoint(c.getPoint(midT));
         });
+    }
+
+    private IPoint mousePosition;
+    private boolean mouseButtonPressed;
+    private final List<IObserver<MouseEvent>> observers = new ArrayList<>();
+
+    @Override
+    public void attach(IObserver<MouseEvent> observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void dettach(IObserver<MouseEvent> observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
+        observers.forEach(observer -> observer.update(new MouseEvent(mousePosition, mouseButtonPressed)));
     }
 }
