@@ -67,7 +67,11 @@ public class SwingUserInterface extends JFrame implements ISubject<MouseEvent> {
             public void mouseReleased(java.awt.event.MouseEvent e) {
                 mouseButtonPressed = false;
                 if (draggableObject.value != null) {
-                    new MoveCommand(draggableObject.value, draggableObject.value.getMovement()).execute();
+                    VisualMoveAreaDecorator v = draggableObject.value;
+                    VisualMoveAreaDecoratorObserver obs = drawables.stream().filter((dr) -> dr.getShape() == v).findAny().get();
+                    int i = drawables.indexOf(obs);
+                    new MoveCommand(drawables, i, draggableObject.value.getMovement()).execute();
+//                    new MoveCommand(draggableObject.value, draggableObject.value.getMovement()).execute();
                 }
                 draggableObject.value = null;
                 notifyObservers();
@@ -115,7 +119,8 @@ public class SwingUserInterface extends JFrame implements ISubject<MouseEvent> {
         new InitCommand(this).execute();
 
         generate.addActionListener(e -> {
-
+            CommandManager.getInstance().undo();
+            redraw();
         });
         undoButton.addActionListener((event) -> {
             CommandManager.getInstance().undo();
