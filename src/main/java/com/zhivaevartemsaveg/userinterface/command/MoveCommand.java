@@ -5,20 +5,20 @@ import com.zhivaevartemsaveg.visual.decorator.VisualMoveAreaDecorator;
 
 public class MoveCommand extends ACommand {
     private VisualMoveAreaDecorator visual;
-    private IPoint center;
+    private IPoint movement;
 
-    public MoveCommand(VisualMoveAreaDecorator visual, IPoint center) {
+    public MoveCommand(VisualMoveAreaDecorator visual, IPoint movement) {
         this.visual = visual;
-        this.center = center;
+        this.movement = movement;
     }
 
     @Override
     protected void doExecute() {
-        visual.moveTo(center);
+        visual.setMoveBy(movement);
     }
 
     @Override
     public ICommand cloneCommand() {
-        return new MoveCommand(visual, center);
+        return new MoveCommand(visual, movement);
     }
 }

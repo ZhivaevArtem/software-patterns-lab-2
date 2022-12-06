@@ -3,6 +3,7 @@ package com.zhivaevartemsaveg.visual.decorator;
 import com.zhivaevartemsaveg.geometry.IArea;
 import com.zhivaevartemsaveg.geometry.IPoint;
 import com.zhivaevartemsaveg.geometry.MutableVector;
+import com.zhivaevartemsaveg.geometry.Point;
 import com.zhivaevartemsaveg.visual.IDrawable;
 import com.zhivaevartemsaveg.visual.IDrawableArea;
 import com.zhivaevartemsaveg.visual.context.IDrawScheme;
@@ -14,6 +15,10 @@ public class VisualMoveAreaDecorator implements IDrawableArea {
     private final MutableVector moveBy;
     private Color color = Color.WHITE;
 
+    public IPoint getMovement() {
+        return new Point(moveBy.getX(), moveBy.getY());
+    }
+
     public VisualMoveAreaDecorator(IDrawableArea drawable) {
         this.drawable = drawable;
         moveBy = new MutableVector();
@@ -23,13 +28,13 @@ public class VisualMoveAreaDecorator implements IDrawableArea {
         this.color = color;
     }
 
-    public void move(IPoint movement) {
-        moveBy.add(movement);
+    public void setMoveBy(IPoint m) {
+        moveBy.setY(m.getY());
+        moveBy.setX(m.getX());
     }
 
-    public void moveTo(IPoint center) {
-        moveBy.setX(center.getX() - drawable.getCenter().getX());
-        moveBy.setY(center.getY() - drawable.getCenter().getY());
+    public void move(IPoint movement) {
+        moveBy.add(movement);
     }
 
     @Override
@@ -76,10 +81,5 @@ public class VisualMoveAreaDecorator implements IDrawableArea {
     @Override
     public boolean contains(IPoint p) {
         return drawable.contains(moveBy.toPoint(p));
-    }
-
-    @Override
-    public IPoint getCenter() {
-        return moveBy.toPoint(drawable.getCenter());
     }
 }

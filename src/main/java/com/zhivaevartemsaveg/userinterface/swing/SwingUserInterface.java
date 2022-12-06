@@ -8,23 +8,20 @@ import com.zhivaevartemsaveg.userinterface.command.InitCommand;
 import com.zhivaevartemsaveg.userinterface.command.MoveCommand;
 import com.zhivaevartemsaveg.visual.IDrawableArea;
 import com.zhivaevartemsaveg.visual.context.DrawSchemeBackground;
-import com.zhivaevartemsaveg.visual.context.DrawSchemeComposer;
 import com.zhivaevartemsaveg.visual.context.IDrawScheme;
-import com.zhivaevartemsaveg.visual.context.SvgCanvas;
 import com.zhivaevartemsaveg.visual.context.swing.SwingCanvas;
 import com.zhivaevartemsaveg.visual.decorator.VisualMoveAreaDecorator;
 import com.zhivaevartemsaveg.visual.observer.IObserver;
 import com.zhivaevartemsaveg.visual.observer.ISubject;
 import com.zhivaevartemsaveg.visual.observer.MouseEvent;
+import com.zhivaevartemsaveg.visual.observer.VisualMoveAreaDecoratorObserver;
+
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.LayoutManager;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
@@ -70,7 +67,7 @@ public class SwingUserInterface extends JFrame implements ISubject<MouseEvent> {
             public void mouseReleased(java.awt.event.MouseEvent e) {
                 mouseButtonPressed = false;
                 if (draggableObject.value != null) {
-                    new MoveCommand(draggableObject.value, new Point(e.getPoint())).execute();
+                    new MoveCommand(draggableObject.value, draggableObject.value.getMovement()).execute();
                 }
                 draggableObject.value = null;
                 notifyObservers();
@@ -128,63 +125,33 @@ public class SwingUserInterface extends JFrame implements ISubject<MouseEvent> {
 
     private IDrawScheme drawScheme;
 
-    private final List<IDrawableArea> drawables = new ArrayList<>();
+    private final List<VisualMoveAreaDecoratorObserver> drawables = new ArrayList<>();
 
     private Ref<VisualMoveAreaDecorator> draggableObject = new Ref<>(null);
     public void draw(IDrawableArea drawable) {
         VisualMoveAreaDecorator v = new VisualMoveAreaDecorator(drawable);
-        Ref<Color> colorRef = new Ref<>(Color.WHITE);
-        Ref<Boolean> isDraggingRef = new Ref<>(false);
-        v.setColor(colorRef.value);
-        drawables.add(v);
-
-        attach(event -> {
-            boolean changed = false;
-            if (v.contains(event.getPoint())) {
-                if (colorRef.value != Color.GREEN) {
-                    colorRef.value = Color.GREEN;
-                    v.setColor(colorRef.value);
-                    changed = true;
-                }
-                if (event.isPressed() && !isDraggingRef.value && draggableObject.value == null) {
-                    isDraggingRef.value = true;
-                    draggableObject.value = v;
-                }
-            } else {
-                if (colorRef.value != Color.WHITE) {
-                    colorRef.value = Color.WHITE;
-                    v.setColor(colorRef.value);
-                    changed = true;
-                }
-            }
-            if (isDraggingRef.value && event.isPressed()) {
-                IPoint movement = event.getMovement();
-                v.move(movement);
-                changed = true;
-            }
-            if (!event.isPressed()) {
-                isDraggingRef.value = false;
-                draggableObject.value = null;
-            }
-            if (changed) {
-                redraw();
-            }
+        VisualMoveAreaDecoratorObserver obs = new VisualMoveAreaDecoratorObserver(v, draggableObject);
+        obs.onChange(unused -> {
+            redraw();
+            return null;
         });
+        attach(obs);
+        drawables.add(obs);
         redraw();
     }
 
     public void clear() {
+        for (VisualMoveAreaDecoratorObserver drawable : drawables) {
+            dettach(drawable);
+        }
         drawables.clear();
         redraw();
     }
 
     public void redraw() {
         drawScheme.clear();
-        //            double len = new SegmentReducer().reduceSegments(c, new GetLengthStrategy(1));
-        //            double midT = new SegmentReducer().reduceSegments(c, new GetParameterStrategy(len / 2));
-        //            drawScheme.drawFirstPoint(c.getPoint(midT));
-        for (IDrawableArea c : drawables) {
-            c.draw(drawScheme);
+        for (VisualMoveAreaDecoratorObserver c : drawables) {
+            c.getShape().draw(drawScheme);
         }
     }
 
