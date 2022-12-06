@@ -6,7 +6,6 @@ import java.awt.*;
 
 public class DrawSchemeBackground implements IDrawScheme {
     private final ICanvas canvas;
-    private final Color color = Color.WHITE;
 
     public DrawSchemeBackground(ICanvas canvas) {
         this.canvas = canvas;

@@ -10,6 +10,11 @@ public class Point implements IPoint {
         this.y = y;
     }
 
+    public Point(java.awt.Point point) {
+        this.x = point.x;
+        this.y = point.y;
+    }
+
     @Override
     public double getX() {
         return x;

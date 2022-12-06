@@ -3,6 +3,9 @@ package com.zhivaevartemsaveg.userinterface.swing;
 import com.zhivaevartemsaveg.Ref;
 import com.zhivaevartemsaveg.geometry.IPoint;
 import com.zhivaevartemsaveg.geometry.Point;
+import com.zhivaevartemsaveg.userinterface.command.CommandManager;
+import com.zhivaevartemsaveg.userinterface.command.InitCommand;
+import com.zhivaevartemsaveg.userinterface.command.MoveCommand;
 import com.zhivaevartemsaveg.visual.IDrawableArea;
 import com.zhivaevartemsaveg.visual.context.DrawSchemeBackground;
 import com.zhivaevartemsaveg.visual.context.DrawSchemeComposer;
@@ -28,22 +31,11 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 
 public class SwingUserInterface extends JFrame implements ISubject<MouseEvent> {
-    private ActionListener generateListener;
-
-    public void onGenerate(ActionListener generateListener) {
-        this.generateListener = generateListener;
-    }
-
     public SwingUserInterface(String name) {
         super(name);
     }
 
     public void start(int w, int h) {
-//        SwingCanvas left = new SwingCanvas(),
-//                right = new SwingCanvas();
-        attach(event -> {
-            System.out.println("event = " + event);
-        });
         SwingCanvas canvas = new SwingCanvas();
         canvas.setBackground(Color.BLACK);
 
@@ -77,6 +69,10 @@ public class SwingUserInterface extends JFrame implements ISubject<MouseEvent> {
             @Override
             public void mouseReleased(java.awt.event.MouseEvent e) {
                 mouseButtonPressed = false;
+                if (draggableObject.value != null) {
+                    new MoveCommand(draggableObject.value, new Point(e.getPoint())).execute();
+                }
+                draggableObject.value = null;
                 notifyObservers();
             }
 
@@ -95,28 +91,8 @@ public class SwingUserInterface extends JFrame implements ISubject<MouseEvent> {
 
         this.setVisible(true);
 
-        SvgCanvas leftSvg = new SvgCanvas(w, h),
-                rightSvg = new SvgCanvas(w, h);
+        drawScheme = new DrawSchemeBackground(canvas);
 
-//        IDrawScheme leftScheme = new DrawSchemeGreen(new CanvasComposer(
-//                left,
-//                leftSvg
-//        ));
-//        IDrawScheme rightScheme = new DrawSchemeBlack(new CanvasComposer(
-//                right,
-//                rightSvg
-//        ));
-        IDrawScheme scheme = new DrawSchemeBackground(canvas);
-
-        IDrawScheme composedScheme = new DrawSchemeComposer(
-//                leftScheme,
-//                rightScheme
-                scheme
-        );
-        drawScheme = composedScheme;
-
-//        JButton leftExport = new JButton("Export");
-//        JButton rightExport = new JButton("Export");
         JButton generate = new JButton("Generate");
         JButton undoButton = new JButton("Undo");
 
@@ -126,9 +102,6 @@ public class SwingUserInterface extends JFrame implements ISubject<MouseEvent> {
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1;
         c.weighty = .5;
-//        this.add(left, c);
-//        c.gridx = 1;
-//        this.add(right, c);
         this.add(canvas, c);
 
         c = new GridBagConstraints();
@@ -136,68 +109,28 @@ public class SwingUserInterface extends JFrame implements ISubject<MouseEvent> {
         c.gridx = 0;
         c.gridy = 1;
         this.add(undoButton, c);
-//        this.add(leftExport, c);
-//        c.gridx = 1;
-//        this.add(rightExport, c);
 
         c.gridy = 2;
         c.gridx = 0;
         c.gridwidth = 2;
         this.add(generate, c);
 
-//        this.addComponentListener(new ComponentAdapter() {
-//            @Override
-//            public void componentResized(ComponentEvent e) {
-//                leftSvg.setSize(left.getWidth(), left.getHeight());
-//                rightSvg.setSize(right.getWidth(), right.getHeight());
-//            }
-//        });
+        new InitCommand(this).execute();
 
-        generate.addActionListener(generateListener);
+        generate.addActionListener(e -> {
+
+        });
         undoButton.addActionListener((event) -> {
-
+            CommandManager.getInstance().undo();
+            redraw();
         });
-
-//        leftExport.addActionListener((e) -> {
-//            exportSvg(leftSvg, "leftCanvas");
-//        });
-//
-//        rightExport.addActionListener((e) -> {
-//            exportSvg(rightSvg, "rightCanvas");
-//        });
-
-        undoButton.addActionListener((e) -> {
-            // TODO: undo
-        });
-
-//        new Thread(() -> {
-//            try {
-//                Thread.sleep(2000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            Graphics g = getGraphics();
-//            paint(g);
-//            repaint();
-//            update(g);
-//            System.out.println("g = " + g);
-//        }).start();
-    }
-
-    private void exportSvg(SvgCanvas svg, String name) {
-        try (FileWriter writer = new FileWriter(name + ".svg")) {
-            writer.write(svg.getSvg());
-            writer.flush();
-        } catch (IOException ex) {
-            System.out.println("ex = " + ex);
-        }
     }
 
     private IDrawScheme drawScheme;
 
     private final List<IDrawableArea> drawables = new ArrayList<>();
 
-    private Ref<Boolean> isAnyDragging = new Ref<>(false);
+    private Ref<VisualMoveAreaDecorator> draggableObject = new Ref<>(null);
     public void draw(IDrawableArea drawable) {
         VisualMoveAreaDecorator v = new VisualMoveAreaDecorator(drawable);
         Ref<Color> colorRef = new Ref<>(Color.WHITE);
@@ -213,9 +146,9 @@ public class SwingUserInterface extends JFrame implements ISubject<MouseEvent> {
                     v.setColor(colorRef.value);
                     changed = true;
                 }
-                if (event.isPressed() && !isDraggingRef.value && !isAnyDragging.value) {
+                if (event.isPressed() && !isDraggingRef.value && draggableObject.value == null) {
                     isDraggingRef.value = true;
-                    isAnyDragging.value = true;
+                    draggableObject.value = v;
                 }
             } else {
                 if (colorRef.value != Color.WHITE) {
@@ -231,7 +164,7 @@ public class SwingUserInterface extends JFrame implements ISubject<MouseEvent> {
             }
             if (!event.isPressed()) {
                 isDraggingRef.value = false;
-                isAnyDragging.value = false;
+                draggableObject.value = null;
             }
             if (changed) {
                 redraw();
@@ -247,12 +180,12 @@ public class SwingUserInterface extends JFrame implements ISubject<MouseEvent> {
 
     public void redraw() {
         drawScheme.clear();
-        drawables.forEach((c) -> {
+        //            double len = new SegmentReducer().reduceSegments(c, new GetLengthStrategy(1));
+        //            double midT = new SegmentReducer().reduceSegments(c, new GetParameterStrategy(len / 2));
+        //            drawScheme.drawFirstPoint(c.getPoint(midT));
+        for (IDrawableArea c : drawables) {
             c.draw(drawScheme);
-//            double len = new SegmentReducer().reduceSegments(c, new GetLengthStrategy(1));
-//            double midT = new SegmentReducer().reduceSegments(c, new GetParameterStrategy(len / 2));
-//            drawScheme.drawFirstPoint(c.getPoint(midT));
-        });
+        }
     }
 
     private IPoint lastMousePosition;

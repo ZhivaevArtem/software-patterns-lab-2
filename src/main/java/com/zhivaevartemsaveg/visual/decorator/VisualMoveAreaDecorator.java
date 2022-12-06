@@ -27,6 +27,11 @@ public class VisualMoveAreaDecorator implements IDrawableArea {
         moveBy.add(movement);
     }
 
+    public void moveTo(IPoint center) {
+        moveBy.setX(center.getX() - drawable.getCenter().getX());
+        moveBy.setY(center.getY() - drawable.getCenter().getY());
+    }
+
     @Override
     public void draw(IDrawScheme context) {
         drawable.draw(new IDrawScheme() {
@@ -71,5 +76,10 @@ public class VisualMoveAreaDecorator implements IDrawableArea {
     @Override
     public boolean contains(IPoint p) {
         return drawable.contains(moveBy.toPoint(p));
+    }
+
+    @Override
+    public IPoint getCenter() {
+        return moveBy.toPoint(drawable.getCenter());
     }
 }

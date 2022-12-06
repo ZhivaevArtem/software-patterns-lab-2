@@ -26,4 +26,9 @@ public class VisualDisk implements IDrawableArea {
 
         return a*a + b*b < r2;
     }
+
+    @Override
+    public IPoint getCenter() {
+        return center;
+    }
 }
