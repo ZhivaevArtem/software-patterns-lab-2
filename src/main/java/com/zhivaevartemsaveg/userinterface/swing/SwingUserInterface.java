@@ -1,25 +1,31 @@
 package com.zhivaevartemsaveg.userinterface.swing;
 
-import com.sun.org.apache.regexp.internal.RE;
 import com.zhivaevartemsaveg.Ref;
 import com.zhivaevartemsaveg.geometry.IPoint;
 import com.zhivaevartemsaveg.geometry.Point;
-import com.zhivaevartemsaveg.visual.IDrawable;
 import com.zhivaevartemsaveg.visual.IDrawableArea;
-import com.zhivaevartemsaveg.visual.context.*;
+import com.zhivaevartemsaveg.visual.context.DrawSchemeBackground;
+import com.zhivaevartemsaveg.visual.context.DrawSchemeComposer;
+import com.zhivaevartemsaveg.visual.context.IDrawScheme;
+import com.zhivaevartemsaveg.visual.context.SvgCanvas;
 import com.zhivaevartemsaveg.visual.context.swing.SwingCanvas;
 import com.zhivaevartemsaveg.visual.decorator.VisualMoveAreaDecorator;
 import com.zhivaevartemsaveg.visual.observer.IObserver;
 import com.zhivaevartemsaveg.visual.observer.ISubject;
 import com.zhivaevartemsaveg.visual.observer.MouseEvent;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.LayoutManager;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JButton;
+import javax.swing.JFrame;
 
 public class SwingUserInterface extends JFrame implements ISubject<MouseEvent> {
     private ActionListener generateListener;

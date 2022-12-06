@@ -10,6 +10,7 @@ public class VisualDisk implements IDrawableArea {
     public VisualDisk(IPoint center, double radius) {
         this.center = center;
         this.radius = radius;
+        this.r2 = radius * radius;
     }
 
     @Override
@@ -17,11 +18,12 @@ public class VisualDisk implements IDrawableArea {
         context.fillCircle(center, radius);
     }
 
+    private final double r2;
     @Override
     public boolean contains(IPoint p) {
         double a = p.getX() - center.getX();
         double b = p.getY() - center.getY();
 
-        return Math.sqrt(a*a + b*b) < radius;
+        return a*a + b*b < r2;
     }
 }
